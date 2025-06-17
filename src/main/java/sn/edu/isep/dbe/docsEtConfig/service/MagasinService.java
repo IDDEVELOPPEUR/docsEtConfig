@@ -33,7 +33,7 @@ public class MagasinService {
     public void supprimerMagasin(Magasin magasin) {
         magasinRepository.delete(magasin);
     }
-
+//méthode pour rechercher un magasin par son nom !
     public Optional<Magasin> magasinParNom(String nom) {
         return magasinRepository.findByNom(nom);
     }
