@@ -28,16 +28,6 @@ public class MagasinController {
         this.magasinService = magasinService;
         this.contentNegotiatingViewResolver = contentNegotiatingViewResolver;
     }
-
-//    @Operation(summary = "La récupération de  tous les magasins.",
-//            description = "Cette URL retourne la liste de tous les magasins disponibles !")
-//    //une autre manière  de le faire
-//    @Operation(summary = ".....",description = ";...",
-//    responses = {
-//            @ApiResponse(responseCode = "NUMERO"),
-//    ............
-//    }
-  //fin d'exemple  )
     @ApiResponses(value = {
 
     @ApiResponse(responseCode = "200", description = "Il s'agit de la liste des magasins trouvés !"),
@@ -46,6 +36,14 @@ public class MagasinController {
     })
 
     @GetMapping
+    @Operation(summary = "la liste des magasins",description = "Cette URL permet de retourner la liste de tous les magasins disponibles !",
+
+    responses = {
+            @ApiResponse(responseCode = "200", description = "Il s'agit de la liste des magasins trouvés !"),
+            @ApiResponse(responseCode = "400",description = "Il n'y a pas de magasins au niveau de la liste des magasins !"),
+            @ApiResponse(responseCode = "500",description = "Il y a une erreur interne !")
+
+    })
     public List<Magasin> getMagasins() {
         return magasinService.getAllMagasins();
     }
@@ -81,11 +79,20 @@ public class MagasinController {
         }
         return ResponseEntity.notFound().build();
     }
+    @Operation(
+            summary = "Ajouter un magasin",
+            description = "permet d'ajouter un magasin",
+            responses={
+                    @ApiResponse(responseCode = "500", description = "Il y a une erreur interne  au niveau du serveur!"),
+                    @ApiResponse(responseCode = "404", description = "Le magasin n'a pas été ajouté !"),
+                    @ApiResponse(responseCode = "200", description = "Le magasin est ajouté ! ")}
+    )
     @PostMapping
     public ResponseEntity ajoutNouvelMagasin(@RequestBody Magasin magasin) {
-        if (magasin.getId() == null) {
-            return ResponseEntity.status(600).body("L'id est obligatoire");
-        }  if (magasin.getNom() == null) {
+//        if (magasin.getId() == null) {
+//            return ResponseEntity.status(600).body("L'id est obligatoire");
+  //      }
+        if (magasin.getNom() == null) {
             return ResponseEntity.status(601).body("Le nom est obligatoire");
         }  if (magasin.getAdresse() == null) {
             return ResponseEntity.status(602).body("L'adresse est obligatoire");
@@ -95,7 +102,74 @@ public class MagasinController {
             return ResponseEntity.status(603).body("Un magasin avec le nom"+magasin.getNom()+"exit déja");
         }
         magasinService.ajoutMagasin(magasin);
-        return ResponseEntity.status(201).body(magasin);
+        return ResponseEntity.status(201).body("le magasin suivant a été ajouté avec succes! "+magasin.getNom()+"\n"+magasin.getAdresse()+"\n"+magasin.getTelephone()+"\n"+magasin.getDescription());
 
     }
+
+    @PutMapping("/{id}")
+    @Operation(
+            summary = "Modifier un magasin",
+            description = "elle nous permet de modifier un magasin dont id (l'identifiant) est précisée !",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Le magasin est mise à jour avec succes !",
+                          content=  @Content(
+                                    mediaType = "application/json",
+                                    schema=@Schema(implementation = Magasin.class))
+                    ),
+                    @ApiResponse(responseCode = "400",description = "Les données ne sont pas valides !"),
+                    @ApiResponse(responseCode = "404",description = "Le magasin avec cette id n'a pas été trouvée !"),
+                    @ApiResponse(responseCode = "404",description = "Désolé, il y a eu une erreur interne !")
+
+            }
+
+    )
+    public ResponseEntity modifierMagasin(@Parameter(description = "l'identifiant du magasin à modifier !")@PathVariable Integer id,@RequestBody Magasin magasin){
+
+        Optional<Magasin> magasinEx=magasinService.getMagasinById(id);
+
+        if (!magasinEx.isPresent()){
+            return ResponseEntity.notFound().build();
+        }
+
+        //je vérifie si le nom est renseigné
+        if (magasin.getNom()==null){
+            return ResponseEntity.status(601).body("le nom doit être renseigner");
+        }
+
+        //je vérifie si le nom est renseigné
+        if (magasin.getAdresse()==null){
+            return ResponseEntity.status(602).body("L'adresse doit être renseigner");
+        }
+
+        magasin.setId(id);
+        magasinService.ajoutMagasin(magasin);
+        return ResponseEntity.ok(magasin);
+    }
+
+    @DeleteMapping("/{id}")
+    @Operation(
+            summary = "Supprimer un magasin",
+            description = "cette methode permet de supprimer un magasin dont l'id est précisé.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Le magasin a été supprimé avec succès."),
+                    @ApiResponse(responseCode = "404", description = "Le magasin avec cette id n'a pas été trouvé."),
+                    @ApiResponse(responseCode = "500", description = "Désolé, il y a eu une erreur interne.")
+            }
+    )
+    public ResponseEntity supprimerMagasin(@Parameter(description = "L'identifiant du magasin à supprimer") @PathVariable Integer id) {
+        try {
+            Optional<Magasin> magasinEx = magasinService.getMagasinById(id);
+            if (!magasinEx.isPresent()) {
+                return ResponseEntity.notFound().build();
+            }
+            magasinService.supprimerMagasin(magasinEx.get());
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            // Pour gérer les erreurs internes de manière global
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
 }
