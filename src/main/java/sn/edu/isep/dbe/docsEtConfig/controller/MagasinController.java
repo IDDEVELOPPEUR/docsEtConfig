@@ -167,6 +167,7 @@ public class MagasinController {
             magasinService.supprimerMagasin(magasinEx.get());
             return ResponseEntity.ok().build();
         } catch (Exception e) {
+            System.out.println("Erreur dans la suppression du magasin : " + e.getMessage() + " !");
             // Pour gérer les erreurs internes de manière global
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
