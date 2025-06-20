@@ -45,6 +45,7 @@ public class MagasinController {
 
     })
     public List<Magasin> getMagasins() {
+        System.out.println("##########  La liste des magasins ! ########");
         return magasinService.getAllMagasins();
     }
 

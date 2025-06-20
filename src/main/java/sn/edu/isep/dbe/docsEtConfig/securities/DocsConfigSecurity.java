@@ -22,11 +22,12 @@ public class DocsConfigSecurity {
                     .requestMatchers("/swagger-ui/**").permitAll()
                     .requestMatchers("/auth/**").permitAll()
                     .requestMatchers("/v3/api-docs/**").permitAll()
-                    .anyRequest().authenticated();
-
+                    .anyRequest().permitAll();
+//                    .anyRequest().authenticated();
         })
                 .sessionManagement(session->{
                     session.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
                 });
 
         return http.build();
