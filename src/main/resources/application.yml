@@ -3,3 +3,13 @@ spring:
     url: jdbc:mysql://${DOCS_CONFIG_DB_HOST:localhost}:${DOCS_CONFIG_DB_PORT:3306}/${DOCS_CONFIG_DB_NAME:doc_config}
     username: ${DOCS_CONFIG_DB_USER:root}
     password: ${DOCS_CONFIG_DB_PWD}
+
+  profiles:
+    active: dev
+
+magasin:
+  auth:
+    token:
+      length: 64
+      caracteres: azertyuiopqsdfghjklmwxcvbnAZERTYUIOPQSDFGHJKLWXCVBN0123456789
+      validite: 24

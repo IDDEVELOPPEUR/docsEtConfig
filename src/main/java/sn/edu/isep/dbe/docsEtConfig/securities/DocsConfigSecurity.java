@@ -28,7 +28,7 @@ public class DocsConfigSecurity {
                 .authorizeHttpRequests((authorizeRequest)->{
             authorizeRequest
                     .requestMatchers("/swagger-ui/**").permitAll()
-                    .requestMatchers("/auth/**").permitAll()
+                    .requestMatchers("/api/v1/auth/**").permitAll()
                     .requestMatchers("/v3/api-docs/**").permitAll()
 //                    .requestMatchers("/api/v1/**").hasRole("USER")
                     .requestMatchers(HttpMethod.GET,"/api/v1/magasins").hasRole("USER")

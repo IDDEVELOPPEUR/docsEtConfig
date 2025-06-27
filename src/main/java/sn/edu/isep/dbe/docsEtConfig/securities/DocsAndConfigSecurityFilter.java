@@ -16,10 +16,13 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import sn.edu.isep.dbe.docsEtConfig.entities.Droit;
 import sn.edu.isep.dbe.docsEtConfig.entities.Role;
 import sn.edu.isep.dbe.docsEtConfig.entities.User;
+import sn.edu.isep.dbe.docsEtConfig.entities.UserToken;
 import sn.edu.isep.dbe.docsEtConfig.repositories.UserRepository;
+import sn.edu.isep.dbe.docsEtConfig.repositories.UserTokenRepository;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,9 +35,11 @@ public class DocsAndConfigSecurityFilter extends OncePerRequestFilter {
 
     private static final Logger logger= LoggerFactory.getLogger("MySecurituFilter");
     private final UserRepository userRepository;
+    private final UserTokenRepository userTokenRepository;
 
-    public DocsAndConfigSecurityFilter(UserRepository userRepository) {
+    public DocsAndConfigSecurityFilter(UserRepository userRepository, UserTokenRepository userTokenRepository) {
         this.userRepository = userRepository;
+        this.userTokenRepository = userTokenRepository;
     }
 
     @Override
@@ -42,36 +47,39 @@ public class DocsAndConfigSecurityFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain)throws ServletException, IOException
     {
-        logger.debug("execution méthode doFilterInternal de la classe DocsAndConfigSecurityFilter");
-        logger.info("requête sur l'url : "+request.getRequestURI());
-        String userAgent =request.getHeader("User-Agent").toLowerCase();
-        if(userAgent.contains("win")){
+        logger.info("récuperation entete d'authentification");
+        String authorization=request.getHeader("Authorization");
+        logger.info("teste si l'entete existe et commence par Bearer");
+        if (authorization!=null && authorization.startsWith("Bearer ")){
+            logger.info("récuperatin du token ");
+            String token=authorization.substring(7);
+            logger.info("recupere userToken correspondant en base");
+            Optional<UserToken> userTokenData=userTokenRepository.findById(token);
+            logger.info("teste si le userToken existe");
+            if (userTokenData.isPresent()){
+                logger.info("le userToken existe et on va le valider");
+                UserToken userToken=userTokenData.get();
+                Date now=new Date();
+                logger.info("verifie si la date d'aujourd'hui entre la date de creation et la date de validation");
+                if (userToken.getExpiresAt().after(now) && userToken.getNotBefore().before(now)){
+                    User user=userToken.getUser();
+                    String login=user.getEmail();
 
-            logger.warn("l'utilisateur est sur une machine windows");
-        }
-        // le login et le password sont des paramètres qui sont envoyés dans la requête pour la connexion.
-        String login=request.getHeader("email");
-        String password=request.getHeader("password");
-        Optional<User> userData=userRepository.findByEmail(login);
-        logger.info("l'utilisateur est connecté avec le login : "+login);
-        logger.info("l'utilisateur est connecté avec le password : "+password);
-        if (userData.isPresent()){
-            logger.info("l'utilisateur est présent ");
+                    List<GrantedAuthority> authorities=new ArrayList<>();
+                    for (Role role:user.getRoles()){
+                        authorities.add(new SimpleGrantedAuthority(role.getNom()));
+                    }
+                    for (Droit droit:user.getDroits()){
+                        authorities.add(new SimpleGrantedAuthority(droit.getNom()));
+                    }
+                   SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(user,login,authorities));
+                }
 
-            List<GrantedAuthority> authorities=new ArrayList<>();
-            User user=userData.get();
-            if(user.getPassword().equals(password)){
-                logger.warn("le mot de passe est incorrect");
-                for(Role role:user.getRoles()){
-                    authorities.add(new SimpleGrantedAuthority(role.getNom()));
-                }
-                for (Droit droit:user.getDroits()){
-                    authorities.add(new SimpleGrantedAuthority(droit.getNom()));
-                }
-                SecurityContextHolder.getContext().setAuthentication(
-                        new UsernamePasswordAuthenticationToken(user,user.getEmail(),authorities));
             }
+
         }
+
+
         filterChain.doFilter(request,response);
     }
 // userRepository
