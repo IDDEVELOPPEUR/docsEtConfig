@@ -9,11 +9,15 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.ContentNegotiatingViewResolver;
 import sn.edu.isep.dbe.docsEtConfig.entities.Magasin;
+import sn.edu.isep.dbe.docsEtConfig.entities.User;
 import sn.edu.isep.dbe.docsEtConfig.service.MagasinService;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -89,10 +93,24 @@ public class MagasinController {
                     @ApiResponse(responseCode = "200", description = "Le magasin est ajouté ! ")}
     )
     @PostMapping
-    public ResponseEntity ajoutNouvelMagasin(@RequestBody Magasin magasin) {
+    public ResponseEntity ajoutNouvelMagasin(@RequestBody Magasin magasin, Authentication authentication) {
 //        if (magasin.getId() == null) {
 //            return ResponseEntity.status(600).body("L'id est obligatoire");
   //      }
+
+        User user= (User) authentication.getPrincipal();
+
+        String login=(String)authentication.getCredentials();
+        Collection<? extends GrantedAuthority> droits=  authentication.getAuthorities();
+        System.out.println("Enregistrement de nouvel magasin");
+        System.out.println("Le login est : "+login);
+        System.out.println("Les droits sont : "+droits);
+        System.out.println("le user est :"+user);
+        System.out.println("le magasin est : "+magasin);
+
+
+        magasin.setCreateur(user);
+
         if (magasin.getNom() == null) {
             return ResponseEntity.status(601).body("Le nom est obligatoire");
         }  if (magasin.getAdresse() == null) {

@@ -1,5 +1,6 @@
 package sn.edu.isep.dbe.docsEtConfig.entities;
 
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -18,13 +19,33 @@ public class Magasin{
     @Schema(description = "identifiant du magasin")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
     //le @Column nullable false nous permet de dire que cette colonne ne doit pas être nulle.
+
     @Column(nullable = false)
     @Schema(description = "nom du magasin")
     private String nom;
+
     @Schema(description = "la description du magasin")
     @Column(nullable = false)
     private String adresse;
+
     private String telephone;
+
     private String description;
+
+    @ManyToOne
+    @JoinColumn(name = "cree_par",nullable = false)
+    private User createur;
+
+    @Override
+    public String toString() {
+        return "Magasin{" +
+                "description='" + description + '\'' +
+                ", id=" + id +
+                ", nom='" + nom + '\'' +
+                ", adresse='" + adresse + '\'' +
+                ", telephone='" + telephone + '\'' +
+                '}';
+    }
 }

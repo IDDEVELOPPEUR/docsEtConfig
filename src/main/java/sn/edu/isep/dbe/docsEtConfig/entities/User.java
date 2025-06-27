@@ -34,4 +34,17 @@ public class User {
     @ManyToMany(fetch = FetchType.EAGER)
     private List<Droit> droits;
 
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", nom='" + nom + '\'' +
+                ", prenom='" + prenom + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", adresse='" + adresse + '\'' +
+                ", roles=" + roles +
+                ", droits=" + droits +
+                '}';
+    }
 }
