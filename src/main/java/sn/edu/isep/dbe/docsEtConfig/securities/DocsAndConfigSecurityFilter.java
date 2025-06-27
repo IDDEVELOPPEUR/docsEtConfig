@@ -13,10 +13,15 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import sn.edu.isep.dbe.docsEtConfig.entities.Droit;
+import sn.edu.isep.dbe.docsEtConfig.entities.Role;
+import sn.edu.isep.dbe.docsEtConfig.entities.User;
+import sn.edu.isep.dbe.docsEtConfig.repositories.UserRepository;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 @Component
@@ -26,6 +31,11 @@ public class DocsAndConfigSecurityFilter extends OncePerRequestFilter {
     //un filter est un composant qui permet de filtrer les requêtes qui ne sont pas autorisées !
 
     private static final Logger logger= LoggerFactory.getLogger("MySecurituFilter");
+    private final UserRepository userRepository;
+
+    public DocsAndConfigSecurityFilter(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -39,18 +49,26 @@ public class DocsAndConfigSecurityFilter extends OncePerRequestFilter {
 
             logger.warn("l'utilisateur est sur une machine windows");
         }
-        logger.error("requete sur l'url : "+request.getRequestURI());
-        List<GrantedAuthority> roles=List.of(
-                new SimpleGrantedAuthority("SuppMag"),//droit
-                new SimpleGrantedAuthority("ROLE_ADMIN"),//un role
-                new SimpleGrantedAuthority("ROLE_MANAGER"),//un role
-                new SimpleGrantedAuthority("ROLE_USER")
-        );
-        SecurityContextHolder.getContext().setAuthentication(
-                new UsernamePasswordAuthenticationToken(
-                "abdou fall","afall@isepat.edu.sn",roles
-        ));
+        // le login et le password sont des paramètres qui sont envoyés dans la requête pour la connexion.
+        String login=request.getParameter("email");
+        String password=request.getParameter("password");
+        Optional<User> userData=userRepository.findByEmail(login);
+        if (userData.isPresent()){
+
+            List<GrantedAuthority> authorities=new ArrayList<>();
+            User user=userData.get();
+            if(!user.getPassword().equals(password)){
+            for(Role role:user.getRoles()){
+                authorities.add(new SimpleGrantedAuthority(role.getNom()));
+            }
+            for (Droit droit:user.getDroits()){
+                authorities.add(new SimpleGrantedAuthority(droit.getNom()));
+            }
+            SecurityContextHolder.getContext().setAuthentication(
+                    new UsernamePasswordAuthenticationToken(user,user.getEmail(),authorities));
+        }
+        }
         filterChain.doFilter(request,response);
     }
-
-}
+// userRepository
+    }
