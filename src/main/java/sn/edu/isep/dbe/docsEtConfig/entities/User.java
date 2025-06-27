@@ -28,7 +28,7 @@ public class User {
 
 
     private String adresse;
-    //pour ne pas changer automatiquement les requetes a chaque chargement
+    //pour ne pas changer automatiquement les requetes a chaque chargement,qu'l n'ait pas de changement
     @ManyToMany(fetch = FetchType.EAGER)
     private List<Role> roles;
     @ManyToMany(fetch = FetchType.EAGER)

@@ -82,7 +82,7 @@ public class MagasinController {
     }
     @Operation(
             summary = "Ajouter un magasin",
-            description = "permet d'ajouter un magasin",
+            description = "permet d'ajouter un magasin !",
             responses={
                     @ApiResponse(responseCode = "500", description = "Il y a une erreur interne  au niveau du serveur!"),
                     @ApiResponse(responseCode = "404", description = "Le magasin n'a pas été ajouté !"),
