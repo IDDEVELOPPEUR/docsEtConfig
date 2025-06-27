@@ -50,25 +50,29 @@ public class DocsAndConfigSecurityFilter extends OncePerRequestFilter {
             logger.warn("l'utilisateur est sur une machine windows");
         }
         // le login et le password sont des paramètres qui sont envoyés dans la requête pour la connexion.
-        String login=request.getParameter("email");
-        String password=request.getParameter("password");
+        String login=request.getHeader("email");
+        String password=request.getHeader("password");
         Optional<User> userData=userRepository.findByEmail(login);
+        logger.info("l'utilisateur est connecté avec le login : "+login);
+        logger.info("l'utilisateur est connecté avec le password : "+password);
         if (userData.isPresent()){
+            logger.info("l'utilisateur est présent ");
 
             List<GrantedAuthority> authorities=new ArrayList<>();
             User user=userData.get();
-            if(!user.getPassword().equals(password)){
-            for(Role role:user.getRoles()){
-                authorities.add(new SimpleGrantedAuthority(role.getNom()));
+            if(user.getPassword().equals(password)){
+                logger.warn("le mot de passe est incorrect");
+                for(Role role:user.getRoles()){
+                    authorities.add(new SimpleGrantedAuthority(role.getNom()));
+                }
+                for (Droit droit:user.getDroits()){
+                    authorities.add(new SimpleGrantedAuthority(droit.getNom()));
+                }
+                SecurityContextHolder.getContext().setAuthentication(
+                        new UsernamePasswordAuthenticationToken(user,user.getEmail(),authorities));
             }
-            for (Droit droit:user.getDroits()){
-                authorities.add(new SimpleGrantedAuthority(droit.getNom()));
-            }
-            SecurityContextHolder.getContext().setAuthentication(
-                    new UsernamePasswordAuthenticationToken(user,user.getEmail(),authorities));
-        }
         }
         filterChain.doFilter(request,response);
     }
 // userRepository
-    }
+}

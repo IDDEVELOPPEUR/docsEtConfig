@@ -29,9 +29,9 @@ public class User {
 
     private String adresse;
     //pour ne pas changer automatiquement les requetes a chaque chargement
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     private List<Role> roles;
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     private List<Droit> droits;
 
 }
