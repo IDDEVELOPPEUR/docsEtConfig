@@ -6,6 +6,9 @@ spring:
 
   profiles:
     active:  ${DOCS_CONFIG_DB_PROFILE:dev}
+  jpa:
+    hibernate:
+      ddl-auto: update
 
 magasin:
   auth:
