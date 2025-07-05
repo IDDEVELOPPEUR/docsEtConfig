@@ -5,7 +5,7 @@ spring:
     password: ${DOCS_CONFIG_DB_PWD}
 
   profiles:
-    active: dev
+    active:  ${DOCS_CONFIG_DB_PROFILE:dev}
 
 magasin:
   auth:
