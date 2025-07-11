@@ -18,4 +18,17 @@ public class InscriptionRequest {
     private String adresse;
     private List<String> roles;
     private List<String> droits;
+
+    @Override
+    public String toString() {
+        return "InscriptionRequest{" +
+                "nom='" + nom + '\'' +
+                ", prenom='" + prenom + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", adresse='" + adresse + '\'' +
+                ", roles=" + roles +
+                ", droits=" + droits +
+                '}';
+    }
 }
