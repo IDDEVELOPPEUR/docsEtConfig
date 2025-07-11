@@ -2,7 +2,7 @@ spring:
   datasource:
     url: jdbc:mysql://${DOCS_CONFIG_DB_HOST:localhost}:${DOCS_CONFIG_DB_PORT:3306}/${DOCS_CONFIG_DB_NAME:doc_config}
     username: ${DOCS_CONFIG_DB_USER:root}
-    password: ${DOCS_CONFIG_DB_PWD}
+    password: ${DOCS_CONFIG_DB_PWD:passer}
 
   profiles:
     active:  ${DOCS_CONFIG_DB_PROFILE:dev}
