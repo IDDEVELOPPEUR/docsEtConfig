@@ -1,1 +1,19 @@
 http://localhost:8086/swagger-ui/index.html#/
+
+//pour l'inscription des users
+
+
+	{
+  "nom": "ibrahima",
+  "prenom": "diallo",
+  "email": "ibra@gmail.com",
+  "password": "passer",
+  "adresse": "passer",
+  "roles": [
+    "ROLE_ADMIN"
+
+  ],
+  "droits": [
+    "creerMag","creerUser","suppUser","suppMag"
+  ]
+}
