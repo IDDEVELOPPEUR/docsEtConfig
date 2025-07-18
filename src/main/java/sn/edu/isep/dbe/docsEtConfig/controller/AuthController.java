@@ -21,11 +21,11 @@ public class AuthController {
 
         //nouvel ajout
         System.out.println("##########  Login ! ########");
-        System.out.println("Le login est : "+loginRequest.getLogin());
+        System.out.println("Le login est : "+loginRequest.getEmail());
         System.out.println("Le mot de passe est : "+loginRequest.getPassword());
         //fin nouvel ajout
 
-        LoginResponse loginResponse=userService.login(loginRequest.getLogin(),loginRequest.getPassword());
+        LoginResponse loginResponse=userService.login(loginRequest.getEmail(),loginRequest.getPassword());
 
         //nouvel ajout
         System.out.println("loginReponse ="+loginResponse);

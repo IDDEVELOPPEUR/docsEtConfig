@@ -2,21 +2,21 @@ package sn.edu.isep.dbe.docsEtConfig.entities.dto;
 
 
 public class LoginRequest {
-    private String login;
+    private String email;
     private String password;
 
     public LoginRequest() {
         System.out.println("creation loginRequest");
     }
 
-    public String getLogin() {
-        System.out.println("get login");
-        return login;
+    public String getEmail() {
+        System.out.println("get email");
+        return email;
     }
 
-    public void setLogin(String login) {
-        System.out.println("set login"+" "+login);
-        this.login = login;
+    public void setEmail(String email) {
+        System.out.println("set login"+" "+email);
+        this.email = email;
     }
 
     public String getPassword() {
