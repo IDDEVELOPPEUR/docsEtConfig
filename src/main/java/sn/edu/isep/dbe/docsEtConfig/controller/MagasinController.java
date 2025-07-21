@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.ContentNegotiatingViewResolver;
 import sn.edu.isep.dbe.docsEtConfig.entities.Magasin;
 import sn.edu.isep.dbe.docsEtConfig.entities.User;
+import sn.edu.isep.dbe.docsEtConfig.entities.dto.MagasinDto;
 import sn.edu.isep.dbe.docsEtConfig.service.MagasinService;
 
 import java.util.Collection;
@@ -48,7 +49,7 @@ public class MagasinController {
             @ApiResponse(responseCode = "500",description = "Il y a une erreur interne !")
 
     })
-    public List<Magasin> getMagasins() {
+    public List<MagasinDto> getMagasins() {
         System.out.println("##########  La liste des magasins ! ########");
         return magasinService.getAllMagasins();
     }
@@ -78,7 +79,7 @@ public class MagasinController {
     public ResponseEntity getMagasinById(
             @Parameter(description = "L'identifiant (id) du magasin à rechercher.")
             @PathVariable int id) {
-        Optional<Magasin> magasin = magasinService.getMagasinById(id);
+        Optional<MagasinDto> magasin = magasinService.getMagasinById(id);
         if (magasin.isPresent()) {
             return ResponseEntity.ok(magasin.get());
         }
@@ -146,7 +147,7 @@ public class MagasinController {
     )
     public ResponseEntity modifierMagasin(@Parameter(description = "l'identifiant du magasin à modifier !")@PathVariable Integer id,@RequestBody Magasin magasin){
 
-        Optional<Magasin> magasinEx=magasinService.getMagasinById(id);
+        Optional<MagasinDto> magasinEx=magasinService.getMagasinById(id);
 
         if (!magasinEx.isPresent()){
             return ResponseEntity.notFound().build();
@@ -179,11 +180,11 @@ public class MagasinController {
     )
     public ResponseEntity supprimerMagasin(@Parameter(description = "L'identifiant du magasin à supprimer") @PathVariable Integer id) {
         try {
-            Optional<Magasin> magasinEx = magasinService.getMagasinById(id);
+            Optional<MagasinDto> magasinEx = magasinService.getMagasinById(id);
             if (!magasinEx.isPresent()) {
                 return ResponseEntity.notFound().build();
             }
-            magasinService.supprimerMagasin(magasinEx.get());
+            magasinService.supprimerMagasinById(magasinEx.get().getId());
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             System.out.println("Erreur dans la suppression du magasin : " + e.getMessage() + " !");

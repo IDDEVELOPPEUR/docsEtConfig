@@ -21,10 +21,7 @@ import sn.edu.isep.dbe.docsEtConfig.repositories.UserRepository;
 import sn.edu.isep.dbe.docsEtConfig.repositories.UserTokenRepository;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 
 @Component
@@ -50,6 +47,12 @@ public class DocsAndConfigSecurityFilter extends OncePerRequestFilter {
         logger.info("récuperation entete d'authentification");
         String authorization=request.getHeader("Authorization");
         logger.info("teste si l'entete existe et commence par Bearer");
+        Enumeration<String> headerNames=request.getHeaderNames();
+        while (headerNames.hasMoreElements()){
+            String headerName=headerNames.nextElement();
+            String headerValue=request.getHeader(headerName);
+            logger.info("Entete "+headerName+" = "+headerValue);
+        }
         if (authorization!=null && authorization.startsWith("Bearer ")){
             logger.info("récuperatin du token ");
             String token=authorization.substring(7);

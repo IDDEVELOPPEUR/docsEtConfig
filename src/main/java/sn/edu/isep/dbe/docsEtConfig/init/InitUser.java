@@ -68,7 +68,7 @@ public class InitUser implements CommandLineRunner {
         User khoudia=User.builder()
                 .prenom("khoudia")
                 .nom("gaye")
-                .adresse("Dakar").password("dakar#2013").email("khgaye@exemple.com")
+                .adresse("Dakar").password("passer").email("i@passer.com")
                 .roles(List.of(userRole,managerRole))
                 .droits(List.of(creerMagasin,SuppMagasin))
                 .build();
