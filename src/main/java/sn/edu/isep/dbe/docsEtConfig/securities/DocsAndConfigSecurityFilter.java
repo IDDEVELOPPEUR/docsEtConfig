@@ -46,7 +46,7 @@ public class DocsAndConfigSecurityFilter extends OncePerRequestFilter {
     {
         logger.info("récuperation entete d'authentification");
         String authorization=request.getHeader("Authorization");
-        logger.info("teste si l'entete existe et commence par Bearer");
+        logger.info("teste si l'entete existe et commence par Bearer authHeader = "+authorization);
         Enumeration<String> headerNames=request.getHeaderNames();
         while (headerNames.hasMoreElements()){
             String headerName=headerNames.nextElement();

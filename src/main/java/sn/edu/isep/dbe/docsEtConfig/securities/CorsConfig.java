@@ -18,8 +18,10 @@ public class CorsConfig {
                 List.of("http://localhost:4200","http://serveur-prod-angular")
         );
         corsConfig.setAllowedHeaders(List.of("*"));
-        corsConfig.setExposedHeaders(List.of("Authorization"));
+        corsConfig.setExposedHeaders(List.of("*"));
         corsConfig.setAllowedMethods(List.of("*"));
+        //autorisation de l'entête autorisation
+        corsConfig.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", corsConfig);
         return new CorsFilter(source);
